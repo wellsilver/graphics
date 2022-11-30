@@ -49,9 +49,9 @@ void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int 
 #endif
   int loop1,loop2;
   int pos;
-  for (loop1=0;loop1<sizex;loop1++) {
+  for (loop1=0;loop1<sizey;loop1++) {
     printf("\n");
-    for (loop2=0;loop2<sizey;loop2++) {
+    for (loop2=0;loop2<sizex;loop2++) {
       // convert to grayscale and print
       pos = r[loop1][loop2] + g[loop1][loop2] + b[loop1][loop2];
       if (pos > 374) {
@@ -94,14 +94,23 @@ grphcs new_win(unsigned int x,unsigned int y) {
   a.size.y = y;
   a.pixels = (pixel **) malloc(sizeof(struct pixel *)*y);
   int loop;
-  for (loop=0;loop<x;loop++) {
+  for (loop=0;loop<y;loop++) {
     a.pixels[loop] = (pixel *) malloc(sizeof(struct pixel)*x);
+  }
+  char clear = 0;
+  int loop2;
+  for (loop=0;loop<x;loop++) { // malloc doesnt initialize, we need to do it manually
+    for (loop2=0;loop2<y;loop2++) {
+      a.pixels[loop][loop2].r=clear;
+      a.pixels[loop][loop2].g=clear;
+      a.pixels[loop][loop2].b=clear;
+    }
   }
   return a;
 }
 
 pixel getpix(grphcs *map,vec2 place) {
-  return map->pixels[place.x][place.y];
+  return map->pixels[place.y][place.x];
 }
 
 void setpix(grphcs *map,vec2 place,pixel color) {
@@ -113,9 +122,9 @@ void draw(grphcs *map) {
   int loop,loop2;
   for (loop=0;loop<map->size.x;loop++) {
     for (loop2=0;loop2<map->size.y;loop2++) {
-      r[loop][loop2] = map->pixels[loop][loop2].r;
-      g[loop][loop2] = map->pixels[loop][loop2].g;
-      b[loop][loop2] = map->pixels[loop][loop2].b;
+      r[loop][loop2] = getpix(map,xy(loop,loop2)).r;
+      g[loop][loop2] = getpix(map,xy(loop,loop2)).g;
+      b[loop][loop2] = getpix(map,xy(loop,loop2)).b;
     }
   }
   struct GRPHC_DATA a = map->win_data;
