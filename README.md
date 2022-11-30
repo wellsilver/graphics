@@ -1,7 +1,7 @@
 # graphics
 totally is not broken af and hung together by pure luck :) rewrite soon
 
-note: It may segfault clang (but not gcc) if it segfaults clang simply compile it as a dynamicly linked library instead
+note: It may segfault clang (its not my fault tho, I think) if it does just keep building it until it works or dynamicly link it instead and compile the library with simpler terms
 
 ## docs
 
