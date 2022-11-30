@@ -3,9 +3,9 @@
 #include <math.h>
 
 typedef struct pixel {
-  char r;
-  char g;
-  char b;
+  short int r;
+  short int g;
+  short int b;
 } pixel;
 
 pixel rgb(int r,int g,int b) {
@@ -19,9 +19,62 @@ typedef struct vec2 {
   int x;
   int y;
 } vec2;
+#ifndef GRPHC_DONE 
+// if no graphics header (for opengl or sdl2) then make a function that prints it to console instead
+#include <stdio.h>
+#include <stdlib.h>
+struct grphc_default_save {
+  
+};
+void grphc_default_init(struct grphc_default_save *data) {
+  int rslt;
+#ifdef _WIN32
+  rslt=system("cls");
+#else
+  rslt=system("clear");
+#endif
+#ifndef GRPHC_DEFAULT_NO_HINT
+  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
+#endif
+}
+void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]) {
+  int rslt;
+#ifdef _WIN32
+  rslt=system("cls");
+#else
+  rslt=system("clear");
+#endif
+#ifndef GRPHC_DEFAULT_NO_HINT
+  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
+#endif
+  int loop1,loop2;
+  int pos;
+  for (loop1=0;loop1<sizex;loop1++) {
+    printf("\n");
+    for (loop2=0;loop2<sizey;loop2++) {
+      // convert to grayscale and print
+      pos = r[loop1][loop2] + g[loop1][loop2] + b[loop1][loop2];
+      if (pos > 374) {
+        printf("+");
+      }
+      else {
+        printf("-");
+      }
+    }
+  }
+}
+#define GRPHC_DONE 
+// define the function that is used to init
+#define GRPHC_INIT grphc_default_init
+// define the function that is used to put a pixel on the screen
+#define GRPHC_DRAW grphc_default_draw
+// define the struct with the data that grphc_win needs
+#define GRPHC_DATA grphc_default_save
+#endif
 
 typedef struct grphcs {
-  void (*draw)(struct grphcs*); // for custom
+  struct GRPHC_DATA win_data;
+  void (*draw)(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]);
   vec2 size;
   pixel **pixels; // pixels[x][y]
 } grphcs;
@@ -33,64 +86,38 @@ vec2 xy(int x,int y) {
   return i;
 }
 
-#ifndef GRAPHICS_USE_MY_RENDERER
-// note: have function as draw()
-void map_draw(grphcs *fav) {
-  
-}
-#endif
-
-#ifdef GRAPHICS_USE_MY_RENDERER
-grphcs new_win(unsigned int x,unsigned int y,void (*map_draw)(grphcs*)) {
-#else
 grphcs new_win(unsigned int x,unsigned int y) {
-#endif
   grphcs a;
-  // if GRAPHICS_USE_MY_RENDERER is not defined then the function is map_draw
-  // if it is defined however, then the function is map_draw arguement
-  a.draw=map_draw;
+  GRPHC_INIT(&a.win_data); // #define GRPHC_INIT
+  a.draw = GRPHC_DRAW; // #define GRPHC_DRAW
   a.size.x = x;
   a.size.y = y;
-  a.pixels = (pixel **) malloc(sizeof(pixel *)*y);
+  a.pixels = (pixel **) malloc(sizeof(struct pixel *)*y);
   int loop;
   for (loop=0;loop<x;loop++) {
-    a.pixels[loop] = (pixel *) malloc(sizeof(pixel)*x);
+    a.pixels[loop] = (pixel *) malloc(sizeof(struct pixel)*x);
   }
+  return a;
 }
 
-void line(grphcs *_map,vec2 point1,vec2 point2,pixel color) {
-  grphcs map = *_map;
-  int loop;
-  vec2 dist; // distance between the two points for each axis
-  dist.x = abs(point1.x-point2.x);
-  dist.y = abs(point1.y-point2.y);
-  int when_to_step=0; // when to set up or down if y is different
-  int has_stepped=0;
-  if (dist.y!=0) {
-    // calc when_to_step
-    when_to_step=dist.y/dist.x;
-  }
-  vec2 current;
-  current.x=point1.x;
-  current.y=point1.y;
-  for (loop=0;loop<dist.x;loop++) {
-    printf("-%i,%i-",current.x,current.y);
-    map.pixels[current.x][current.y] = color;
-    // calculate next current
-    if (has_stepped==when_to_step) {
-      if (current.y>point2.y) current.y++;
-      if (current.y<point2.y) current.y--;
+pixel getpix(grphcs *map,vec2 place) {
+  return map->pixels[place.x][place.y];
+}
+
+void setpix(grphcs *map,vec2 place,pixel color) {
+  map->pixels[place.x][place.y] = color;
+}
+
+void draw(grphcs *map) {
+  int r[map->size.x][map->size.y], g[map->size.x][map->size.y], b[map->size.x][map->size.y];
+  int loop,loop2;
+  for (loop=0;loop<map->size.x;loop++) {
+    for (loop2=0;loop2<map->size.y;loop2++) {
+      r[loop][loop2] = map->pixels[loop][loop2].r;
+      g[loop][loop2] = map->pixels[loop][loop2].g;
+      b[loop][loop2] = map->pixels[loop][loop2].b;
     }
-    if (current.x>point2.x) current.x++;
-    if (current.x<point2.x) current.x--;
-    has_stepped++;
   }
-}
-
-void rect(grphcs *map,vec2 point1,vec2 point2) {
-  
-}
-
-void fill(grphcs *map,vec2 point1,vec2 point2) {
-  
+  struct GRPHC_DATA a = map->win_data;
+  map->draw(&a,map->size.x,map->size.y,r,g,b);
 }
