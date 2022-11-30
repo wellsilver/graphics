@@ -1,5 +1,5 @@
 # graphics
-totally is not broken af and hung together by pure luck :)
+totally is not broken af and hung together by pure luck :) rewrite soon
 
 note: It may segfault clang (but not gcc) if it segfaults clang simply compile it as a dynamicly linked library instead
 
