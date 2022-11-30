@@ -1,11 +1,10 @@
 #ifndef GRPHC_DONE 
-// if no graphics header (for opengl or sdl2) then make a function that prints it to console instead
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> // printf()
+#include <stdlib.h> // system()
 struct grphc_default_save {
-  
+  // the library doesnt need to save anything so this is empty.
 };
-void grphc_default_init(struct grphc_default_save *data) {
+void grphc_default_init(struct grphc_default_save *data) { // this function is for initializing the window. We dont need initialization so its fine clearing the screen and leaving the note there
   int rslt;
 #ifdef _WIN32
   rslt=system("cls");
@@ -15,8 +14,9 @@ void grphc_default_init(struct grphc_default_save *data) {
 #ifndef GRPHC_DEFAULT_NO_HINT
   printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
 #endif
-}
-void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]) {
+} 
+// drawing, now this is where it gets very complicated. int sizex and int sizey are the sizes of the graph, r[][] is a 2D array (r[x][y]) with the integer for the red number on the rgb pixel.
+void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]) { 
   int rslt;
 #ifdef _WIN32
   rslt=system("cls");
