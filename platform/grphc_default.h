@@ -1,52 +1,42 @@
-#ifndef GRPHC_DONE 
-#include <stdio.h> // printf()
-#include <stdlib.h> // system()
-struct grphc_default_save {
-  // the library doesnt need to save anything so this is empty.
+#ifndef GRAPHIC_DONE
+#define GRAPHIC_DONE
+#include <stdio.h>
+#include <stdlib.h> 
+// not needed, used by graphic_console not by graphics.h
+struct graphic_r_save {
+  int sizex;
+  int sizey;
+  int a_dist;
+  char *a;
 };
-void grphc_default_init(struct grphc_default_save *data) { // this function is for initializing the window. We dont need initialization so its fine clearing the screen and leaving the note there
-  int rslt;
+// called when map_new is called
+void graphic_r_init(struct graphic_r_save *save,int size_x,int size_y) {
+  save->sizex = size_x;
+  save->sizey = size_y;
+  save->a_dist=0;
+  save->a = (char *) malloc(sizeof(char)*(size_x*size_y));
+}
+// called for each pixel
+void graphic_r_putpixel(struct graphic_r_save *save,int x,int y,int r,int g,int b) {
+  if (y+x==0) {
 #ifdef _WIN32
-  rslt=system("cls");
+    system("cls");
 #else
-  rslt=system("clear");
+    system("clear");
 #endif
-#ifndef GRPHC_DEFAULT_NO_HINT
-  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
-#endif
-} 
-// drawing, now this is where it gets very complicated. int sizex and int sizey are the sizes of the graph, r[][] is a 2D array (r[x][y]) with the integer for the red number on the rgb pixel.
-void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]) { 
-  int rslt;
-#ifdef _WIN32
-  rslt=system("cls");
-#else
-  rslt=system("clear");
-#endif
-#ifndef GRPHC_DEFAULT_NO_HINT
-  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
-#endif
-  int loop1,loop2;
-  int pos;
-  for (loop1=0;loop1<sizex;loop1++) {
-    printf("\n");
-    for (loop2=0;loop2<sizey;loop2++) {
-      // convert to grayscale and print
-      pos = r[loop1][loop2] + g[loop1][loop2] + b[loop1][loop2];
-      if (pos > 374) {
-        printf("+");
-      }
-      else {
-        printf("-");
-      }
-    }
+  }
+  if (r+g+b>384) {
+    putchar('+');
+  }
+  else {
+    putchar('-');
+  }
+  if (y+1==save->sizey) { // every time y changes print a new line
+    putchar('\n');
   }
 }
-#define GRPHC_DONE 
-// define the function that is used to init
-#define GRPHC_INIT grphc_default_init
-// define the function that is used to put a pixel on the screen
-#define GRPHC_DRAW grphc_default_draw
-// define the struct with the data that grphc_win needs
-#define GRPHC_DATA grphc_default_save
+// called when all pixels placed, to finalize placing.
+void graphic_r_finishpixels(struct graphic_r_save *save) { 
+  // nothing to do, just leave it blank
+}
 #endif
