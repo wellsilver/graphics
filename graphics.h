@@ -1,132 +1,82 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-
 typedef struct pixel {
   short int r;
   short int g;
   short int b;
 } pixel;
-
-pixel rgb(int r,int g,int b) {
-  pixel i;
-  i.r=r;
-  i.g=g;
-  i.b=b;
-  return i;
-}
 typedef struct vec2 {
   int x;
   int y;
 } vec2;
-#ifndef GRPHC_DONE 
-// if no graphics header (for opengl or sdl2) then make a function that prints it to console instead
-#include <stdio.h>
-#include <stdlib.h>
-struct grphc_default_save {
-  
-};
-void grphc_default_init(struct grphc_default_save *data) {
-  int rslt;
-#ifdef _WIN32
-  rslt=system("cls");
-#else
-  rslt=system("clear");
-#endif
-#ifndef GRPHC_DEFAULT_NO_HINT
-  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
-#endif
-}
-void grphc_default_draw(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]) {
-  int rslt;
-#ifdef _WIN32
-  rslt=system("cls");
-#else
-  rslt=system("clear");
-#endif
-#ifndef GRPHC_DEFAULT_NO_HINT
-  printf("Using default rendering config, renders in command line, to hide this #DEFINE GRPHC_DEFAULT_NO_HINT\n");
-#endif
-  int loop1,loop2;
-  int pos;
-  for (loop1=0;loop1<sizey;loop1++) {
-    printf("\n");
-    for (loop2=0;loop2<sizex;loop2++) {
-      // convert to grayscale and print
-      pos = r[loop1][loop2] + g[loop1][loop2] + b[loop1][loop2];
-      if (pos > 374) {
-        printf("+");
-      }
-      else {
-        printf("-");
-      }
-    }
-  }
-}
-#define GRPHC_DONE 
-// define the function that is used to init
-#define GRPHC_INIT grphc_default_init
-// define the function that is used to put a pixel on the screen
-#define GRPHC_DRAW grphc_default_draw
-// define the struct with the data that grphc_win needs
-#define GRPHC_DATA grphc_default_save
-#endif
-
 typedef struct grphcs {
-  struct GRPHC_DATA win_data;
-  void (*draw)(struct grphc_default_save *data,int sizex,int sizey,int r[sizex][sizey],int g[sizex][sizey],int b[sizex][sizey]);
   vec2 size;
-  pixel **pixels; // pixels[x][y]
+  pixel **pixels;
+#ifdef GRAPHIC_DONE
+  struct graphic_r_save _dat;
+#endif
 } grphcs;
 
-vec2 xy(int x,int y) {
+// utils
+vec2 g_xy(int x,int y) {
   vec2 i;
   i.x=x;
   i.y=y;
   return i;
 }
 
-grphcs new_win(unsigned int x,unsigned int y) {
-  grphcs a;
-  GRPHC_INIT(&a.win_data); // #define GRPHC_INIT
-  a.draw = GRPHC_DRAW; // #define GRPHC_DRAW
-  a.size.x = x;
-  a.size.y = y;
-  a.pixels = (pixel **) malloc(sizeof(struct pixel *)*y);
+pixel g_rgb(int r,int g,int b) {
+  if (r>255 || g>255 || b>255) {
+    // thats not valid!
+  }
+  pixel i;
+  i.r=r;
+  i.g=g;
+  i.b=b;
+  return i;
+}
+
+grphcs grphc_new(unsigned int x,unsigned int y) {
+  grphcs i;
+#ifdef GRAPHIC_DONE
+  graphic_r_init(&i._dat,x,y);
+#endif
+  i.size.x=x;
+  i.size.y=y;
+  i.pixels = (struct pixel **) malloc(sizeof(struct pixel *)*y);
   int loop;
   for (loop=0;loop<y;loop++) {
-    a.pixels[loop] = (pixel *) malloc(sizeof(struct pixel)*x);
+    i.pixels[loop] = (struct pixel *) malloc(sizeof(struct pixel)*x);
   }
   char clear = 0;
   int loop2;
   for (loop=0;loop<x;loop++) { // malloc doesnt initialize, we need to do it manually
     for (loop2=0;loop2<y;loop2++) {
-      a.pixels[loop][loop2].r=clear;
-      a.pixels[loop][loop2].g=clear;
-      a.pixels[loop][loop2].b=clear;
+      i.pixels[loop][loop2].r=clear;
+      i.pixels[loop][loop2].g=clear;
+      i.pixels[loop][loop2].b=clear;
     }
   }
-  return a;
+  return i;
 }
 
-pixel getpix(grphcs *map,vec2 place) {
-  return map->pixels[place.y][place.x];
+pixel graphic_getp(grphcs *_grphc,vec2 pos) {
+  return _grphc->pixels[pos.y][pos.x];
 }
 
-void setpix(grphcs *map,vec2 place,pixel color) {
-  map->pixels[place.x][place.y] = color;
+void graphic_setp(grphcs *_grphc,vec2 pos,pixel set_to) {
+  _grphc->pixels[pos.y][pos.x] = set_to;
 }
 
-void draw(grphcs *map) {
-  int r[map->size.x][map->size.y], g[map->size.x][map->size.y], b[map->size.x][map->size.y];
+void graphic_draw(grphcs *_grphc) {
+#ifdef GRAPHIC_DONE
   int loop,loop2;
-  for (loop=0;loop<map->size.x;loop++) {
-    for (loop2=0;loop2<map->size.y;loop2++) {
-      r[loop][loop2] = getpix(map,xy(loop,loop2)).r;
-      g[loop][loop2] = getpix(map,xy(loop,loop2)).g;
-      b[loop][loop2] = getpix(map,xy(loop,loop2)).b;
+  pixel cr;
+  for (loop=0;loop<_grphc->size.x;loop++) {
+    for (loop2=0;loop2<_grphc->size.x;loop2++) {
+      cr = graphic_getp(_grphc,g_xy(loop,loop2));
+      graphic_r_putpixel(&_grphc->_dat,loop,loop2,cr.r,cr.g,cr.b);
     }
   }
-  struct GRPHC_DATA a = map->win_data;
-  map->draw(&a,map->size.x,map->size.y,r,g,b);
+  graphic_r_finishpixels(&_grphc->_dat);
+#endif
 }
