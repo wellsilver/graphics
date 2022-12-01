@@ -20,16 +20,17 @@ This little code snippet should showcase all of the functions for graphics.h
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include "graphics.h"
+#include <unistd.h> // sleep()
+#include "graphic_console.h" // prints graphics to console (it or similar required)
+#include "graphics.h" // the header (obv required)
 
 int main() {
-  grphcs a = new_win(10,10); // 2D graph 10*10 long
-  pixel color = rgb(255,255,255); // white
-  vec2 pos;
-  for (int loop=0;loop<5;loop++) { // make a white line that goes down from the top
-    pos = xy(5,1+loop);
-    setpix(&a, pos, color);
+  pixel white = g_rgb(255,255,255); // the color white
+  grphcs a = grphc_new(10,10);
+  graphic_setp(&a,g_xy(4,4),white); // center of the 10*10 graph
+  while (1) {
+    graphic_draw(&a);
+    sleep(1); // dont overload the terminal!!
   }
-  draw(&a);
 }
 ```
