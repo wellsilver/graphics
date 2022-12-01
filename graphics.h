@@ -1,8 +1,8 @@
 #include <stdlib.h>
 typedef struct pixel {
-  char r;
-  char g;
-  char b;
+  short int r;
+  short int g;
+  short int b;
 } pixel;
 typedef struct vec2 {
   int x;
@@ -17,14 +17,14 @@ typedef struct grphcs {
 } grphcs;
 
 // utils
-vec2 graphic_xy(int x,int y) {
+vec2 g_xy(int x,int y) {
   vec2 i;
   i.x=x;
   i.y=y;
   return i;
 }
 
-pixel graphic_rgb(char r,char g,char b) {
+pixel g_rgb(int r,int g,int b) {
   pixel i;
   i.r=r;
   i.g=g;
@@ -70,7 +70,7 @@ void graphic_draw(grphcs *_grphc) {
   pixel cr;
   for (loop=0;loop<_grphc->size.x;loop++) {
     for (loop2=0;loop2<_grphc->size.x;loop2++) {
-      cr = graphic_getp(_grphc,graphic_xy(loop,loop2));
+      cr = graphic_getp(_grphc,g_xy(loop,loop2));
       graphic_r_putpixel(&_grphc->_dat,loop,loop2,cr.r,cr.g,cr.b);
     }
   }
