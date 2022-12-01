@@ -25,6 +25,9 @@ vec2 g_xy(int x,int y) {
 }
 
 pixel g_rgb(int r,int g,int b) {
+  if (r>255 || g>255 || b>255) {
+    // thats not valid!
+  }
   pixel i;
   i.r=r;
   i.g=g;
