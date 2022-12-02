@@ -18,7 +18,7 @@ This little code snippet should showcase all of the functions for graphics.h
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> // sleep()
-#include "graphic_console.h" // prints graphics to console (it or similar required)
+#include "graphic_console.h" // prints graphics to console (it or similar required), there is a SDL2 renderer in ``./platform`` for windows
 #include "graphics.h" // the header (obv required)
 
 int main() {
