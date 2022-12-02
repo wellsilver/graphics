@@ -2,7 +2,7 @@ This is very barebones, graphics.h is missing alot of things right now and not a
 
 ## Downloading
 
-Download (SDL2 development libraries)[https://github.com/efornara/sdl2/releases]
+Download SDL2 development libraries [here](https://github.com/efornara/sdl2/releases)
 
 ## usage
 
