@@ -4,7 +4,7 @@
 
 ### Files
 
-``graphics.h`` the ansi-c graphics library
+``graphics.h`` the graphics library
 
 ``platform/grphc_console.h`` renderer that prints to console, used in the quickstart below
 
