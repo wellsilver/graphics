@@ -10,6 +10,8 @@
 
 ``platform/*`` renderers provided by everyone (to add yours submit pull request) look in the folder of your platform for the renderer you would like and use it :) they may have instructions with them
 
+``libs/*`` libraries for graphics.h
+
 ### quickstart
 
 This little code snippet should showcase all of the functions for graphics.h
