@@ -8,3 +8,4 @@
 | framework | name | Platform | description | link |
 | --------- | ---- | -------- | ----------- | ---- |
 | n/a     | default | n/a | a renderer to test things out with | [/platform/grphc_default.h](https://github.com/wellsilver/graphics/blob/main/platform/grphc_default.h) |
+| SDL2 | SDL2 renderer | n/a | a barebones renderer for SDL2 | [/platform/all/sdl2/sdl2_renderer.h](https://github.com/wellsilver/graphics/blob/sdl2/platform/all/sdl2/sdl2_renderer.h)
