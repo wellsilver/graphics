@@ -31,3 +31,37 @@ int main() {
   }
 }
 ```
+
+## functions
+
+### basic
+
+``vec2 g_xy(int x,int y)``
+quickly makes a vec2 x,y and returns
+
+``pixel g_rgb(int r,int g,int b)``
+quickly makes a pixel in rgb format
+
+``grphcs grphc_new(int sizex,int sizey)`` 
+makes a new graphic (2D graph) sizex*sizey large
+
+### pixel access
+
+``pixel graphic_getp(grphcs *_grphc,vec2 pos)``
+returns the pixel at pos
+
+``void graphic_setp(grphcs *_grphc,vec2 pos,pixel set_to)``
+sets the pixel at pos to set_to
+
+### gfx
+
+``void graphic_clear(grphcs *_grphc,pixel color)``
+set the entire screen to color
+
+``void graphic_line(grphcs *_grphc,vec2 from,vec2 to,pixel set_to)``
+makes a line from from to to with the color of set_to
+
+``void graphic_fill(grphcs *_grphc,vec2 pos,vec2 size,pixel color)``
+fills a square in at pos as large as size with color
+
+
