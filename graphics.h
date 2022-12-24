@@ -80,3 +80,40 @@ void graphic_draw(grphcs *_grphc) {
   graphic_r_finishpixels(&_grphc->_dat);
 #endif
 }
+// use bresenhams to draw a line from,to with the color of color ex, graphic_line(&a,g_xy(1,1),g_xy(9,9),g_rgb(255,255,255))
+void graphic_line(grphcs *_grphc,vec2 from,vec2 to,pixel color) {
+  int dx, dy, p, x, y;
+  
+  int x0 = from.x;
+  int y0 = from.y;
+  int x1 = to.x;
+  int y1 = to.y;
+  
+  dx=x1-x0;
+  dy=y1-y0;
+  x=x0;
+  y=y0;
+  p=2*dy-dx;
+  while(x<x1) {
+    if(p>=0) {
+      graphic_setp(_grphc,g_xy(x,y),color);
+      y=y+1;
+      p=p+2*dy-2*dx;
+    }
+    else {
+      graphic_setp(_grphc,g_xy(x,y),color);
+      p=p+2*dy;
+      }
+    x=x+1;
+    }
+  }
+
+// fill a rectangle at pos, as large as size. ex: graphic_fill(&a,g_xy(5,5),g_xy(2,2),g_rgb(255,255,255))
+void graphic_fill(grphcs *_grphc,vec2 pos,vec2 size,pixel color) {
+  int loop1,loop2;
+  for (loop1=0;loop1<size.y;loop1++) {
+    for (loop2=0;loop2<size.x;loop2++) {
+      graphic_setp(_grphc, g_xy(pos.x+loop2,pos.y+loop1), color);
+    }
+  }
+}
