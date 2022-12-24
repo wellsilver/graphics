@@ -58,7 +58,7 @@ sets the pixel at pos to set_to
 ``void graphic_clear(grphcs *_grphc,pixel color)``
 set the entire screen to color
 
-``void graphic_line(grphcs *_grphc,vec2 from,vec2 to,pixel set_to)``
+``void graphic_line(grphcs *_grphc,vec2 from,vec2 to,pixel color)``
 makes a line from from to to with the color of set_to
 
 ``void graphic_fill(grphcs *_grphc,vec2 pos,vec2 size,pixel color)``
