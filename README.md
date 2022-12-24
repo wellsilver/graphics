@@ -12,7 +12,7 @@
 
 ### quickstart
 
-This little code snippet should showcase all of the functions for graphics.h
+This little snippet should showcase all of the functions for graphics.h
 
 ```c
 #include <stdio.h>
